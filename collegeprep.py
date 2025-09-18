@@ -50,7 +50,7 @@ def load_data(file_path):
     try:
         df = pd.read_csv(file_path)
         # Verify required columns
-        required_columns = ["Name of the college", "City", "State", "Minimum Score Required"]
+        required_columns = ["Name of College", "City", "State", "Minimum Score Required"]
         if not all(col in df.columns for col in required_columns):
             missing = [col for col in required_columns if col not in df.columns]
             st.error(f"CSV file '{file_path}' is missing required columns: {missing}")
