@@ -59,7 +59,7 @@ def load_data(file_path):
     try:
         df = pd.read_csv(file_path)
         # Verify required columns
-        required_columns = ["Name of the college", "City", "State", "Minimum Score Required"]
+        required_columns = ["Name of the College", "City", "State", "Minimum Score Required"]
         if not all(col in df.columns for col in required_columns):
             missing = [col for col in required_columns if col not in df.columns]
             st.error(f"CSV file '{file_path}' is missing required columns: {missing}")
@@ -105,7 +105,7 @@ with st.expander("How to Add More AP Courses"):
     st.markdown(
         """
         1. Place CSV files in the `data` folder with the naming pattern: `College_list_export_AP [Subject].csv` (e.g., `College_list_export_AP Calculus.csv`).
-        2. Ensure columns are: `Name of the college`, `City`, `State`, `Minimum Score Required`.
+        2. Ensure columns are: `Name of the College`, `City`, `State`, `Minimum Score Required`.
         3. Refresh the app to see the new course in the dropdown.
         """
     )
