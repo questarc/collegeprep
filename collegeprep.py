@@ -15,7 +15,7 @@ if not os.path.exists(data_dir):
 # Assumes files are named like "college_list_export_AP_[Subject].csv"
 subjects = []
 for filename in os.listdir(data_dir):
-    if filename.startswith("college_list_export_AP_") and filename.endswith(".csv"):
+    if filename.startswith("College_list_export_AP_") and filename.endswith(".csv"):
         # Extract subject name (e.g., "Psychology" from "college_list_export_AP_Psychology.csv")
         subject = filename.replace("college_list_export_AP_", "").replace(".csv", "")
         subjects.append(subject)
