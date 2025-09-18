@@ -10,7 +10,7 @@ data_dir = "data"
 
 # Check if data directory exists
 if not os.path.exists(data_dir):
-    st.error(f"The '{data_dir}' folder does not exist. Please create it in the same directory as this app and add your CSV files (e.g., 'college_list_export_AP_Psychology.csv').")
+    st.error(f"The '{data_dir}' folder does not exist. Please create it in the same directory as this app and add your CSV files (e.g., 'College_list_export_AP_Psychology.csv').")
     st.stop()
 
 # List all files in the data directory for debugging
@@ -25,20 +25,20 @@ else:
 subjects = []
 for filename in all_files:
     if filename.startswith("College_list_export_AP_") and filename.endswith(".csv"):
-        # Extract subject name (e.g., "Psychology" from "college_list_export_AP_Psychology.csv")
+        # Extract subject name (e.g., "Psychology" from "College_list_export_AP_Psychology.csv")
         subject = filename.replace("College_list_export_AP_", "").replace(".csv", "")
         subjects.append(subject)
 
 if not subjects:
-    st.error("No AP course CSV files found in the 'data' folder. Please ensure files are named like 'college_list_export_AP_Psychology.csv' and are located in the 'data' folder.")
-    st.write("**Expected file format:** Files must start with 'college_list_export_AP_' and end with '.csv'.")
-    st.write("**Example:** 'college_list_export_AP_Psychology.csv'")
+    st.error("No AP course CSV files found in the 'data' folder. Please ensure files are named like 'College_list_export_AP_Psychology.csv' and are located in the 'data' folder.")
+    st.write("**Expected file format:** Files must start with 'College_list_export_AP_' and end with '.csv'.")
+    st.write("**Example:** 'College_list_export_AP_Psychology.csv'")
     st.stop()
 
 # User selects an AP course
 selected_subject = st.selectbox("Select an AP Course:", subjects)
 
-# Load the corresponding CSV file
+# Load the corresponding CSV file with explicit data folder prefix
 csv_filename = f"College_list_export_AP_{selected_subject}.csv"
 file_path = os.path.join(data_dir, csv_filename)
 
@@ -95,6 +95,10 @@ col3.metric("Avg Min Score", f"{df['Minimum Score Required'].mean():.1f}")
 
 # Instructions for adding more courses
 with st.expander("How to Add More AP Courses"):
-    st.markdown("""
-    1. Place CSV files in the `data` folder with the naming pattern: `college_list_export_AP_[Subject].csv` (e.g., `college_list_export_AP_Calculus.csv`).
-    2
+    st.markdown(
+        """
+        1. Place CSV files in the `data` folder with the naming pattern: `College_list_export_AP_[Subject].csv` (e.g., `College_list_export_AP_Calculus.csv`).
+        2. Ensure columns are: `Name of the college`, `City`, `State`, `Minimum Score Required`.
+        3. Refresh the app to see the new course in the dropdown.
+        """
+    )
