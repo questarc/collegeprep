@@ -110,4 +110,3 @@ with st.expander("How to Add More AP Courses"):
         3. Refresh the app to see the new course in the dropdown.
         """
     )
-```
