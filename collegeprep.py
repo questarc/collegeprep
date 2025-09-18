@@ -84,9 +84,9 @@ filtered_df = df[
 # Display the filtered table
 st.dataframe(filtered_df, use_container_width=True)
 
-# Optional: Show summary stats
+# Show summary stats based on filtered data
 st.subheader("Summary")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Colleges", len(df))
 col2.metric("Filtered Colleges", len(filtered_df))
-col3.metric("Avg Min Score", f"{df['Minimum Score Required'].mean():.1f}")
+col3.metric("Avg Min Score", f"{filtered_df['Minimum Score Required'].mean():.1f}" if not filtered_df.empty else "N/A")
