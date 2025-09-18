@@ -17,7 +17,7 @@ subjects = []
 for filename in os.listdir(data_dir):
     if filename.startswith("College_list_export_AP_") and filename.endswith(".csv"):
         # Extract subject name (e.g., "Psychology" from "college_list_export_AP_Psychology.csv")
-        subject = filename.replace("college_list_export_AP_", "").replace(".csv", "")
+        subject = filename.replace("College_list_export_AP_", "").replace(".csv", "")
         subjects.append(subject)
 
 if not subjects:
@@ -28,7 +28,7 @@ if not subjects:
 selected_subject = st.selectbox("Select an AP Course:", subjects)
 
 # Load the corresponding CSV file
-csv_filename = f"college_list_export_AP_{selected_subject}.csv"
+csv_filename = f"College_list_export_AP_{selected_subject}.csv"
 file_path = os.path.join(data_dir, csv_filename)
 
 if not os.path.exists(file_path):
