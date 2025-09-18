@@ -5,23 +5,34 @@ import os
 # Title of the app
 st.title("College Explorer: AP Courses and Accepting Colleges")
 
-# Create data directory if it doesn't exist (for development; in production, assume it's there)
+# Define the data directory
 data_dir = "data"
+
+# Check if data directory exists
 if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
-    st.warning(f"Created '{data_dir}' folder. Please place your CSV files there, e.g., 'college_list_export_AP_Psychology.csv'.")
+    st.error(f"The '{data_dir}' folder does not exist. Please create it in the same directory as this app and add your CSV files (e.g., 'college_list_export_AP_Psychology.csv').")
+    st.stop()
+
+# List all files in the data directory for debugging
+all_files = os.listdir(data_dir)
+st.write("**Files found in 'data' folder for debugging:**")
+if all_files:
+    st.write(all_files)
+else:
+    st.warning(f"No files found in '{data_dir}' folder.")
 
 # Dynamically discover AP courses from CSV files in the data folder
-# Assumes files are named like "college_list_export_AP_[Subject].csv"
 subjects = []
-for filename in os.listdir(data_dir):
+for filename in all_files:
     if filename.startswith("College_list_export_AP_") and filename.endswith(".csv"):
         # Extract subject name (e.g., "Psychology" from "college_list_export_AP_Psychology.csv")
         subject = filename.replace("College_list_export_AP_", "").replace(".csv", "")
         subjects.append(subject)
 
 if not subjects:
-    st.error("No AP course CSV files found in the 'data' folder. Please add files like 'college_list_export_AP_Psychology.csv'.")
+    st.error("No AP course CSV files found in the 'data' folder. Please ensure files are named like 'college_list_export_AP_Psychology.csv' and are located in the 'data' folder.")
+    st.write("**Expected file format:** Files must start with 'college_list_export_AP_' and end with '.csv'.")
+    st.write("**Example:** 'college_list_export_AP_Psychology.csv'")
     st.stop()
 
 # User selects an AP course
@@ -31,19 +42,31 @@ selected_subject = st.selectbox("Select an AP Course:", subjects)
 csv_filename = f"College_list_export_AP_{selected_subject}.csv"
 file_path = os.path.join(data_dir, csv_filename)
 
+# Verify file existence
 if not os.path.exists(file_path):
-    st.error(f"File '{csv_filename}' not found in '{data_dir}'.")
+    st.error(f"File '{csv_filename}' not found in '{data_dir}'. Please check the file name and path.")
     st.stop()
 
 @st.cache_data
 def load_data(file_path):
-    return pd.read_csv(file_path)
+    try:
+        df = pd.read_csv(file_path)
+        # Verify required columns
+        required_columns = ["Name of the college", "City", "State", "Minimum Score Required"]
+        if not all(col in df.columns for col in required_columns):
+            missing = [col for col in required_columns if col not in df.columns]
+            st.error(f"CSV file '{file_path}' is missing required columns: {missing}")
+            st.stop()
+        return df
+    except Exception as e:
+        st.error(f"Error reading CSV file '{file_path}': {str(e)}")
+        st.stop()
 
 df = load_data(file_path)
 
-# Display the data with columns: Name of the college, City, State, Minimum Score Required
+# Display the data
 st.subheader(f"Colleges Accepting AP {selected_subject}")
-st.write("This table shows colleges that accept AP {selected_subject}, along with their location and minimum score required.")
+st.write(f"This table shows colleges that accept AP {selected_subject}, along with their location and minimum score required.")
 
 # Optional: Add filters for interactivity
 col1, col2 = st.columns(2)
@@ -74,6 +97,4 @@ col3.metric("Avg Min Score", f"{df['Minimum Score Required'].mean():.1f}")
 with st.expander("How to Add More AP Courses"):
     st.markdown("""
     1. Place CSV files in the `data` folder with the naming pattern: `college_list_export_AP_[Subject].csv` (e.g., `college_list_export_AP_Calculus.csv`).
-    2. Ensure columns are: `Name of the college`, `City`, `State`, `Minimum Score Required`.
-    3. Refresh the app to see the new course in the dropdown.
-    """)
+    2
