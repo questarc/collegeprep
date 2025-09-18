@@ -14,17 +14,9 @@ if not os.path.exists(data_dir):
     st.error(f"The '{data_dir}' folder does not exist. Please create it in the same directory as this app and add your CSV files (e.g., 'College_list_export_AP Psychology.csv').")
     st.stop()
 
-# List all files in the data directory for debugging
-all_files = os.listdir(data_dir)
-st.write("**Files found in 'data' folder for debugging:**")
-if all_files:
-    st.write(all_files)
-else:
-    st.warning(f"No files found in '{data_dir}' folder.")
-
 # Dynamically discover AP courses from CSV files in the data folder
 subjects = []
-for filename in all_files:
+for filename in os.listdir(data_dir):
     # Match files starting with 'College_list_export_AP ' and ending with '.csv'
     if filename.startswith("College_list_export_AP ") and filename.endswith(".csv"):
         # Extract subject name using regex to handle spaces and special characters
@@ -51,7 +43,6 @@ file_path = os.path.join(data_dir, csv_filename)
 # Verify file existence
 if not os.path.exists(file_path):
     st.error(f"File '{csv_filename}' not found in '{data_dir}'. Please check the file name and path.")
-    st.write("**Available files:**", all_files)
     st.stop()
 
 @st.cache_data
@@ -59,7 +50,7 @@ def load_data(file_path):
     try:
         df = pd.read_csv(file_path)
         # Verify required columns
-        required_columns = ["Name of College", "City", "State", "Minimum Score Required"]
+        required_columns = ["Name of the college", "City", "State", "Minimum Score Required"]
         if not all(col in df.columns for col in required_columns):
             missing = [col for col in required_columns if col not in df.columns]
             st.error(f"CSV file '{file_path}' is missing required columns: {missing}")
@@ -99,13 +90,3 @@ col1, col2, col3 = st.columns(3)
 col1.metric("Total Colleges", len(df))
 col2.metric("Filtered Colleges", len(filtered_df))
 col3.metric("Avg Min Score", f"{df['Minimum Score Required'].mean():.1f}")
-
-# Instructions for adding more courses
-with st.expander("How to Add More AP Courses"):
-    st.markdown(
-        """
-        1. Place CSV files in the `data` folder with the naming pattern: `College_list_export_AP [Subject].csv` (e.g., `College_list_export_AP Calculus.csv`).
-        2. Ensure columns are: `Name of College`, `City`, `State`, `Minimum Score Required`.
-        3. Refresh the app to see the new course in the dropdown.
-        """
-    )
