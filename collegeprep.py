@@ -66,7 +66,7 @@ df = load_data(file_path)
 st.subheader(f"Colleges Accepting AP {selected_subject}")
 st.write(f"This table shows colleges that accept AP {selected_subject}, along with their location and minimum score required.")
 
-# Optional: Add filters for interactivity
+# Add filters for interactivity
 col1, col2 = st.columns(2)
 with col1:
     selected_state = st.multiselect("Filter by State:", options=df['State'].unique(), default=df['State'].unique())
@@ -87,6 +87,9 @@ st.dataframe(filtered_df, use_container_width=True)
 # Show summary stats based on filtered data
 st.subheader("Summary")
 col1, col2, col3 = st.columns(3)
-col1.metric("Total Colleges", len(df))
-col2.metric("Filtered Colleges", len(filtered_df))
-col3.metric("Avg Min Score", f"{filtered_df['Minimum Score Required'].mean():.1f}" if not filtered_df.empty else "N/A")
+with col1:
+    st.metric("Total Colleges", len(df))
+with col2:
+    st.metric("Filtered Colleges", len(filtered_df))
+with col3:
+    st.metric("Avg Min Score", f"{filtered_df['Minimum Score Required'].mean():.1f}" if not filtered_df.empty else "N/A")
