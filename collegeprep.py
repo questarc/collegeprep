@@ -1,6 +1,8 @@
+```python
 import streamlit as st
 import pandas as pd
 import os
+import re
 
 # Title of the app
 st.title("College Explorer: AP Courses and Accepting Colleges")
@@ -24,19 +26,25 @@ else:
 # Dynamically discover AP courses from CSV files in the data folder
 subjects = []
 for filename in all_files:
+    # Match files starting with 'College_list_export_AP_' and ending with '.csv'
     if filename.startswith("College_list_export_AP_") and filename.endswith(".csv"):
-        # Extract subject name (e.g., "Psychology" from "College_list_export_AP_Psychology.csv")
-        subject = filename.replace("College_list_export_AP_", "").replace(".csv", "")
-        subjects.append(subject)
+        # Extract subject name by removing prefix and suffix
+        # Use regex to handle complex names with spaces or special characters
+        match = re.match(r"College_list_export_AP_(.*)\.csv$", filename)
+        if match:
+            subject = match.group(1)  # Extract the subject part (e.g., "Physics 2", "Psychology (1)")
+            subjects.append(subject)
+        else:
+            st.warning(f"File '{filename}' matches the pattern but could not extract subject name.")
 
 if not subjects:
-    st.error("No AP course CSV files found in the 'data' folder. Please ensure files are named like 'College_list_export_AP_Psychology.csv' and are located in the 'data' folder.")
+    st.error("No valid AP course CSV files found in the 'data' folder. Please ensure files are named like 'College_list_export_AP_Psychology.csv' and are located in the 'data' folder.")
     st.write("**Expected file format:** Files must start with 'College_list_export_AP_' and end with '.csv'.")
     st.write("**Example:** 'College_list_export_AP_Psychology.csv'")
     st.stop()
 
 # User selects an AP course
-selected_subject = st.selectbox("Select an AP Course:", subjects)
+selected_subject = st.selectbox("Select an AP Course:", sorted(subjects))
 
 # Load the corresponding CSV file with explicit data folder prefix
 csv_filename = f"College_list_export_AP_{selected_subject}.csv"
@@ -45,6 +53,7 @@ file_path = os.path.join(data_dir, csv_filename)
 # Verify file existence
 if not os.path.exists(file_path):
     st.error(f"File '{csv_filename}' not found in '{data_dir}'. Please check the file name and path.")
+    st.write("**Available files:**", all_files)
     st.stop()
 
 @st.cache_data
@@ -102,3 +111,4 @@ with st.expander("How to Add More AP Courses"):
         3. Refresh the app to see the new course in the dropdown.
         """
     )
+```
